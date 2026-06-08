@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Te llegó esta notita by myeya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --romantic-pink: #ffb3c1; 
+      --romantic-red: #ff4d6d;  
+      --texto: #3c0912;
+      --papel: #fffdfd;
+      --borde-discontinuo: var(--romantic-pink);
+      --sombra: rgba(60, 9, 18, 0.06);
+    }
+    *{box-sizing:border-box}
+    body{font-family: 'Montserrat',system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial; background:#fff5f6; margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px; color:var(--texto); overflow-x: hidden;}
+    
+    .stage{width:100%; max-width:920px; text-align:center; position: relative; z-index: 2;}
+    
+    /* Contenedor del sobre */
+    .note-thumb{cursor:pointer; display:inline-block; transition:transform .28s;}
+    .note-thumb:hover{transform:translateY(-8px) scale(1.05)}
+    
+    .title{margin-top:12px; font-weight:600; color:var(--romantic-red); letter-spacing: 0.5px;}
+    .sheet-wrap{display:none; margin-top:28px; position: relative;}
+    
+    /* Diseño de la carta + Barra lateral */
+    .main-content-layout {
+      display: flex;
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    /* Panel central con el marco de guiones */
+    .sheet{
+      position:relative; 
+      background:var(--papel); 
+      border-radius:14px; 
+      border:2px dashed var(--borde-discontinuo); 
+      box-shadow:0 18px 40px var(--sombra); 
+      padding:36px 40px; 
+      overflow:hidden;
+      flex-grow: 1;
+    }
+    
+    /* Barra lateral sólida */
+    .sidebar {
+      width: 45px;
+      background-color: var(--romantic-pink);
+      border-radius: 0 14px 14px 0;
+      margin-left: 12px;
+      position: relative;
+      flex-shrink: 0;
+      align-self: stretch;
+    }
+    
+    .sheet h1{font-family:'Playfair Display', serif; margin:6px 0 12px; font-size:34px; color:var(--romantic-red)}
+    .letter{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9)); padding:22px; border-radius:10px; border:1px dashed rgba(255, 179, 193, 0.4); text-align:left}
+    .letter p{line-height:1.6; font-size:16px; margin:0 0 12px}
+    
+    .back-btn{margin-top:22px; background:var(--romantic-red); border:none; padding:12px 24px; border-radius:12px; color:white; font-weight:600; cursor:pointer; box-shadow:0 8px 20px rgba(255, 77, 109, 0.2); transition:transform .18s, background-color 0.2s; position: relative; z-index: 10;}
+    .back-btn:hover{background: #e03a59;}
+    .back-btn:active{transform:translateY(2px)}
+    
+    /* Corazones estáticos */
+    .static-heart {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      transform: rotate(-45deg);
+      background-color: var(--romantic-pink);
+      opacity: 0.9;
+    }
+    .static-heart:before, .static-heart:after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: var(--romantic-pink);
+      border-radius: 50%;
+    }
+    .static-heart:before { top: -7px; left: 0; }
+    .static-heart:after { left: 7px; top: 0; }
+    
+    .sh-1 { bottom: 40px; right: 120px; }
+    .sh-2 { bottom: 90px; right: 60px; }
+    .sh-3 { bottom: 35px; right: 40px; }
+    
+    .sh-sidebar { 
+      top: 40%; 
+      left: 50%; 
+      transform: translate(-50%, -50%) rotate(-45deg); 
+      background-color: var(--romantic-red); 
+    }
+    .sh-sidebar:before, .sh-sidebar:after { background-color: var(--romantic-red); }
+    
+    /* Contenedor de corazones que vuelan */
+    .hearts-floating-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1; 
+      overflow: hidden;
+    }
+    
+    .heart-fly {
+      position: absolute;
+      bottom: -20px;
+      width: 16px;
+      height: 16px;
+      transform: rotate(-45deg);
+      background-color: var(--romantic-red);
+      opacity: 0;
+    }
+    .heart-fly:before, .heart-fly:after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-color: var(--romantic-red);
+      border-radius: 50%;
+    }
+    .heart-fly:before { top: -8px; left: 0; }
+    .heart-fly:after { left: 8px; top: 0; }
+    
+    @keyframes floatUpGlobal {
+      0% { transform: translateY(0) scale(0.6) rotate(-45deg); opacity: 0; }
+      15% { opacity: 0.7; }
+      85% { opacity: 0.7; }
+      100% { transform: translateY(-110vh) scale(1.3) rotate(-45deg); opacity: 0; }
+    }
+    
+    @media (max-width:560px){
+      .main-content-layout {flex-direction: column; max-width: 95%;}
+      .sheet{width:100%; max-width: 100%; padding: 24px;}
+      .sidebar {width:100%; height: 25px; border-radius: 0 0 14px 14px; margin-left: 0; margin-top: 12px;}
+      .sheet h1{font-size:26px}
+      .sh-sidebar { top: 50%; left: 50%; }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="bgMusic" src="musica.mp3" loop></audio>
+
+  <div class="hearts-floating-container" id="floatingLayer"></div>
+  
+  <div class="stage">
+    <div id="thumb" class="note-thumb" title="Te llegó esta notita">
+      <svg width="220" height="180" viewBox="0 0 100 80" style="display: block;">
+        <rect x="5" y="15" width="90" height="60" rx="6" fill="var(--romantic-pink)" />
+        <polygon points="5,15 50,50 95,15" fill="#ffa4b2" />
+        <path d="M50,42 C48,38 43,38 43,41 C43,45 50,50 50,50 C50,50 57,45 57,41 C57,38 52,38 50,42 Z" fill="var(--romantic-red)" />
+      </svg>
+    </div>
+    <div class="title">Te llegó esta disculpa
+(Bajale el volumen)</div>
+    
+    <div id="sheetWrap" class="sheet-wrap">
+      <div class="main-content-layout">
+        
+        <div class="sheet" role="region" aria-label="carta de amor">
+          <div class="static-heart sh-1"></div>
+          <div class="static-heart sh-2"></div>
+          <div class="static-heart sh-3"></div>
+          
+          <h1>Claudia <3</h1>
+          <div class="letter">
+            <p>meperd0n as¿</p>
+            <p>Si te he fallado te pido perdón de la única forma que se abriendo las puertas de mi corazón para cuando decidas volver, yo solo quiero tu amor</p>
+            <p>Con todo mi cariño,</p>
+            <p><strong>Juan</strong></p>
+          </div>
+        </div>
+        
+        <div class="sidebar">
+          <div class="static-heart sh-sidebar"></div>
+        </div>
+        
+      </div>
+      
+      <div style="text-align:center">
+        <button id="backBtn" class="back-btn">Regresar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const thumb = document.getElementById('thumb');
+    const sheetWrap = document.getElementById('sheetWrap');
+    const floatingLayer = document.getElementById('floatingLayer');
+    const backBtn = document.getElementById('backBtn');
+    const bgMusic = document.getElementById('bgMusic'); 
+    let heartsInterval = null;
+
+    function spawnHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart-fly');
+      heart.style.left = Math.random() * 100 + 'vw';
+      const duration = Math.random() * 4 + 4; 
+      heart.style.animation = `floatUpGlobal ${duration}s linear forwards`;
+      floatingLayer.appendChild(heart);
+      setTimeout(() => { heart.remove(); }, duration * 1000);
+    }
+
+    thumb.addEventListener('click', ()=>{
+      thumb.style.display = 'none';
+      document.querySelector('.title').style.display = 'none';
+      sheetWrap.style.display = 'block';
+      
+      bgMusic.play().catch(error => console.log("El navegador bloqueó el audio temporalmente:", error));
+      
+      heartsInterval = setInterval(spawnHeart, 300);
+    });
+
+    backBtn.addEventListener('click', ()=>{
+      sheetWrap.style.display = 'none';
+      thumb.style.display = 'inline-block';
+      document.querySelector('.title').style.display = 'block';
+      
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      
+      clearInterval(heartsInterval);
+      floatingLayer.innerHTML = ''; 
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && sheetWrap.style.display === 'block'){
+        backBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
